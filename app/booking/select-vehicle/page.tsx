@@ -10,7 +10,7 @@ import { Button } from '@/components/shared/Button';
 
 export default function SelectVehiclePage() {
   const router = useRouter();
-  const { quote, pickup, dropoff, setSelectedVehicle, setStep } = useRideFlow();
+  const { quote, pickup, dropoff, setSelectedVehicle, setStep, serviceType, hours } = useRideFlow();
 
   // If no quote data, redirect back home
   if (!quote) {
@@ -34,7 +34,7 @@ export default function SelectVehiclePage() {
               Change Locations
             </button>
             <h1 className="text-3xl font-bold text-white tracking-tight">
-              Select your <span className="text-primary">Ride</span>
+              Select your <span className="text-primary">{serviceType === 'hourly' ? 'Hourly Service' : 'Ride'}</span>
             </h1>
           </div>
 
@@ -43,13 +43,24 @@ export default function SelectVehiclePage() {
                 <div className="w-2 h-2 rounded-full bg-primary ring-4 ring-primary/10" />
                 <p className="text-sm text-gray-300 truncate">{pickup?.address}</p>
              </div>
-             <div className="flex items-center gap-3">
-                <div className="w-2 h-2 rounded-full bg-gray-600 ring-4 ring-gray-600/10" />
-                <p className="text-sm text-gray-300 truncate">{dropoff?.address}</p>
-             </div>
+             {(serviceType !== 'hourly' || dropoff) && (
+               <div className="flex items-center gap-3">
+                  <div className="w-2 h-2 rounded-full bg-gray-600 ring-4 ring-gray-600/10" />
+                  <p className="text-sm text-gray-300 truncate">{dropoff?.address || 'No dropoff specified'}</p>
+               </div>
+             )}
              <div className="pt-2 mt-1 border-t border-white/5 flex items-center justify-between text-[10px] uppercase font-bold tracking-widest text-gray-500">
-                <span>Distance: {quote.distance} {quote.distance_unit}</span>
-                <span>Time: ~25 mins</span>
+                {serviceType === 'hourly' ? (
+                  <>
+                    <span>Duration: {hours} {hours === 1 ? 'Hour' : 'Hours'}</span>
+                    <span>Service: Hourly</span>
+                  </>
+                ) : (
+                  <>
+                    <span>Distance: {quote.distance} {quote.distance_unit}</span>
+                    <span>Time: ~25 mins</span>
+                  </>
+                )}
              </div>
           </div>
         </div>

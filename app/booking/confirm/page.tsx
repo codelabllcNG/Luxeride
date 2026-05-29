@@ -1,17 +1,23 @@
 "use client";
 
-import React from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useRouter } from 'next/navigation';
 import { useRideFlow } from '@/lib/hooks/useRideFlow';
-import { ArrowLeft, MapPin, Receipt, ShieldCheck, CreditCard, ChevronRight } from 'lucide-react';
+import { ArrowLeft, MapPin, Receipt, ShieldCheck, CreditCard, ChevronRight, Calendar, Clock, Users, FileText } from 'lucide-react';
 import { Button } from '@/components/shared/Button';
+import { toast } from 'sonner';
 
 export default function ConfirmBookingPage() {
   const router = useRouter();
-  const { pickup, dropoff, selectedVehicle, bookRide, isLoading } = useRideFlow();
+  const { pickup, dropoff, selectedVehicle, bookRide, isLoading, serviceType, hours } = useRideFlow();
 
-  if (!selectedVehicle || !pickup || !dropoff) {
+  const [date, setDate] = useState('');
+  const [time, setTime] = useState('');
+  const [passengers, setPassengers] = useState(1);
+  const [notes, setNotes] = useState('');
+
+  if (!selectedVehicle || !pickup || (serviceType === 'ride' && !dropoff)) {
     if (typeof window !== 'undefined') {
       router.push('/');
     }
@@ -19,7 +25,19 @@ export default function ConfirmBookingPage() {
   }
 
   const handleBook = async () => {
-    await bookRide(selectedVehicle);
+    let formattedDatetime = undefined;
+    if (serviceType === 'hourly') {
+      if (!date || !time) {
+        toast.error("Please select pickup date and time for hourly bookings");
+        return;
+      }
+      formattedDatetime = `${date} ${time}:00`;
+    } else {
+      if (date && time) {
+        formattedDatetime = `${date} ${time}:00`;
+      }
+    }
+    await bookRide(selectedVehicle, formattedDatetime, passengers, notes);
   };
 
   return (
@@ -53,10 +71,86 @@ export default function ConfirmBookingPage() {
                   <p className="text-white font-medium">{pickup.address}</p>
                 </div>
 
-                <div className="relative pl-8">
-                  <div className="absolute left-0 top-1.5 w-3 h-3 rounded-full bg-gray-600 ring-4 ring-gray-600/10" />
-                  <p className="text-[10px] uppercase font-bold text-gray-500 tracking-widest mb-1">Dropoff Location</p>
-                  <p className="text-white font-medium">{dropoff.address}</p>
+                {dropoff && (
+                  <div className="relative pl-8">
+                    <div className="absolute left-0 top-1.5 w-3 h-3 rounded-full bg-gray-600 ring-4 ring-gray-600/10" />
+                    <p className="text-[10px] uppercase font-bold text-gray-500 tracking-widest mb-1">Dropoff Location</p>
+                    <p className="text-white font-medium">{dropoff.address}</p>
+                  </div>
+                )}
+
+                {serviceType === 'hourly' && (
+                  <div className="relative pl-8">
+                    <div className="absolute left-0 top-1.5 w-3 h-3 rounded-full bg-primary/40 ring-4 ring-primary/5" />
+                    <p className="text-[10px] uppercase font-bold text-gray-500 tracking-widest mb-1">Booking Duration</p>
+                    <p className="text-white font-medium">{hours} {hours === 1 ? 'Hour' : 'Hours'}</p>
+                  </div>
+                )}
+              </div>
+
+              <div className="h-px bg-white/5" />
+
+              {/* Trip Schedule & Custom inputs */}
+              <div className="space-y-6">
+                <h3 className="text-sm font-bold text-white tracking-widest uppercase flex items-center gap-2">
+                  <Calendar className="w-4 h-4 text-primary" />
+                  Scheduling & Passenger Details
+                </h3>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest">
+                      Pickup Date {serviceType === 'hourly' && '*'}
+                    </label>
+                    <input
+                      type="date"
+                      value={date}
+                      onChange={(e) => setDate(e.target.value)}
+                      className="w-full bg-white/5 border border-white/10 text-white rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary/50 transition-all [color-scheme:dark]"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest">
+                      Pickup Time {serviceType === 'hourly' && '*'}
+                    </label>
+                    <input
+                      type="time"
+                      value={time}
+                      onChange={(e) => setTime(e.target.value)}
+                      className="w-full bg-white/5 border border-white/10 text-white rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary/50 transition-all [color-scheme:dark]"
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest">
+                      Passenger Count
+                    </label>
+                    <select
+                      value={passengers}
+                      onChange={(e) => setPassengers(Number(e.target.value))}
+                      className="w-full bg-dark-charcoal border border-white/10 text-white rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary/50 transition-all"
+                    >
+                      {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((n) => (
+                        <option key={n} value={n} className="bg-dark text-white">
+                          {n} {n === 1 ? 'Passenger' : 'Passengers'}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <div className="space-y-2">
+                    <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-widest">
+                      Driver Notes / Instructions
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="e.g. Need English-speaking driver, child seat..."
+                      value={notes}
+                      onChange={(e) => setNotes(e.target.value)}
+                      className="w-full bg-white/5 border border-white/10 text-white rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-primary/50 transition-all"
+                    />
+                  </div>
                 </div>
               </div>
 
@@ -72,7 +166,8 @@ export default function ConfirmBookingPage() {
                     <p className="text-[10px] uppercase font-bold text-gray-500 tracking-widest mb-1">Selected Vehicle</p>
                     <p className="text-white font-bold text-lg">{selectedVehicle.title}</p>
                     <div className="flex items-center gap-2 text-xs text-gray-400 mt-1">
-                      <span className="flex items-center gap-1"><ShieldCheck className="w-3 h-3 text-primary" /> Premium Service</span>
+                      <ShieldCheck className="w-3 h-3 text-primary" />
+                      <span className="flex items-center gap-1">{serviceType === 'hourly' ? 'Hourly Service' : 'Premium Service'}</span>
                     </div>
                   </div>
                 </div>

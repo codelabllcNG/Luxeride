@@ -21,12 +21,18 @@ export function RideFlow() {
     selectedVehicle, setSelectedVehicle,
     activeTrip,
     step, setStep,
+    serviceType, setServiceType,
+    hours, setHours,
     reset
   } = useRideFlow();
 
   const handleGetPrices = async () => {
-    if (!pickup || !dropoff) {
-      toast.error("Please enter both pickup and dropoff locations");
+    if (!pickup) {
+      toast.error("Please enter a pickup location");
+      return;
+    }
+    if (serviceType === 'ride' && !dropoff) {
+      toast.error("Please enter a dropoff location");
       return;
     }
     await fetchQuote(pickup, dropoff);
@@ -59,6 +65,26 @@ export function RideFlow() {
               exit="exit"
               className="space-y-6"
             >
+              {/* Premium Service Type Selector */}
+              <div className="flex space-x-2 bg-white/5 p-1 rounded-xl ring-1 ring-white/10">
+                <button
+                  type="button"
+                  onClick={() => setServiceType('ride')}
+                  className={`flex-1 py-2.5 text-xs font-semibold uppercase tracking-wider rounded-lg transition-all flex items-center justify-center gap-2 ${serviceType === 'ride' ? 'bg-primary text-black font-bold shadow-lg shadow-primary/20' : 'text-gray-400 hover:text-white'}`}
+                >
+                  <Car className="w-3.5 h-3.5" />
+                  Standard Ride
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setServiceType('hourly')}
+                  className={`flex-1 py-2.5 text-xs font-semibold uppercase tracking-wider rounded-lg transition-all flex items-center justify-center gap-2 ${serviceType === 'hourly' ? 'bg-primary text-black font-bold shadow-lg shadow-primary/20' : 'text-gray-400 hover:text-white'}`}
+                >
+                  <Clock className="w-3.5 h-3.5" />
+                  Hourly Booking
+                </button>
+              </div>
+
               <div className="space-y-4">
                 <LocationSearch 
                   label="Pickup Location" 
@@ -66,15 +92,47 @@ export function RideFlow() {
                   onSelect={setPickup}
                   initialValue={pickup?.address}
                 />
-                <LocationSearch 
-                  label="Dropoff Location" 
-                  placeholder="Where to?" 
-                  onSelect={setDropoff}
-                  initialValue={dropoff?.address}
-                />
+                
+                <div className="relative">
+                  <LocationSearch 
+                    label={serviceType === 'hourly' ? "Dropoff Location (Optional)" : "Dropoff Location"} 
+                    placeholder={serviceType === 'hourly' ? "Where to? (Optional)" : "Where to?"} 
+                    onSelect={setDropoff}
+                    initialValue={dropoff?.address}
+                  />
+                  {serviceType === 'hourly' && (
+                    <span className="text-[10px] text-gray-500 mt-1 block">
+                      Note: Dropoff is optional. Driver will take you anywhere during your booked hours.
+                    </span>
+                  )}
+                </div>
+
+                {serviceType === 'hourly' && (
+                  <div className="space-y-2">
+                    <label className="block text-xs font-semibold text-grey-medium uppercase tracking-wider">
+                      Duration (Hours)
+                    </label>
+                    <div className="relative">
+                      <select
+                        value={hours}
+                        onChange={(e) => setHours(Number(e.target.value))}
+                        className="w-full bg-dark-lighter border border-white/10 text-grey-pastel rounded-xl px-4 py-3.5 text-sm focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/20 transition-all appearance-none"
+                      >
+                        {Array.from({ length: 24 }, (_, i) => i + 1).map((h) => (
+                          <option key={h} value={h} className="bg-dark-charcoal text-white">
+                            {h} {h === 1 ? 'Hour' : 'Hours'}
+                          </option>
+                        ))}
+                      </select>
+                      <div className="pointer-events-none absolute inset-y-0 right-4 flex items-center">
+                        <Clock className="w-4 h-4 text-primary opacity-60" />
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
 
-              <div className="grid grid-cols-3 gap-4 py-4">
+              <div className="grid grid-cols-3 gap-4 py-2">
                 {[
                   { icon: Car, label: "Premium" },
                   { icon: Clock, label: "Real-time" },
@@ -94,7 +152,7 @@ export function RideFlow() {
                 fullWidth 
                 size="lg" 
                 isLoading={isLoading}
-                disabled={!pickup || !dropoff}
+                disabled={!pickup || (serviceType === 'ride' && !dropoff)}
               >
                 Get Prices <ChevronRight className="w-4 h-4" />
               </Button>

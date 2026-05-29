@@ -10,6 +10,8 @@ interface BookingState {
   activeTrip: Trip | null;
   step: number;
   isModalOpen: boolean;
+  serviceType: 'ride' | 'hourly';
+  hours: number;
   
   setPickup: (loc: Location | null) => void;
   setDropoff: (loc: Location | null) => void;
@@ -18,6 +20,8 @@ interface BookingState {
   setActiveTrip: (trip: Trip | null) => void;
   setStep: (step: number) => void;
   setModalOpen: (open: boolean) => void;
+  setServiceType: (type: 'ride' | 'hourly') => void;
+  setHours: (hours: number) => void;
   reset: () => void;
 }
 
@@ -29,6 +33,8 @@ export const useBookingStore = create<BookingState>((set) => ({
   activeTrip: null,
   step: 1,
   isModalOpen: false,
+  serviceType: 'ride',
+  hours: 1,
 
   setPickup: (pickup) => set({ pickup }),
   setDropoff: (dropoff) => set({ dropoff }),
@@ -37,6 +43,8 @@ export const useBookingStore = create<BookingState>((set) => ({
   setActiveTrip: (activeTrip) => set({ activeTrip }),
   setStep: (step) => set({ step }),
   setModalOpen: (isModalOpen) => set({ isModalOpen }),
+  setServiceType: (serviceType) => set({ serviceType }),
+  setHours: (hours) => set({ hours }),
   
   reset: () => set({
     pickup: null,
@@ -45,6 +53,8 @@ export const useBookingStore = create<BookingState>((set) => ({
     selectedVehicle: null,
     activeTrip: null,
     step: 1,
-    isModalOpen: false
+    isModalOpen: false,
+    serviceType: 'ride',
+    hours: 1
   })
 }));

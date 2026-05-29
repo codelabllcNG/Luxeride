@@ -17,6 +17,8 @@ export interface VehicleQuote {
   original_price?: number;
   discount_amount?: number;
   currency?: string;
+  hourly_rate?: number;
+  hours?: number;
 }
 
 export interface TripQuote {

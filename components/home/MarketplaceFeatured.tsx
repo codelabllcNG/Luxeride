@@ -75,9 +75,9 @@ export function MarketplaceFeatured({ vehicles }: MarketplaceFeaturedProps) {
                       {vehicle.title || 'Unknown Vehicle'}
                     </h3>
                     <div className="flex items-center justify-between">
-                      <span className="text-primary font-bold">
+                      {/* <span className="text-primary font-bold">
                         {vehicle.price ? `$${vehicle.price}` : 'Contact us'}
-                      </span>
+                      </span> */}
                       <div className="flex items-center space-x-1 text-grey-medium">
                         <UsersIcon className="w-4 h-4" />
                         <span className="text-sm">{vehicle.capacity || '-'}</span>

@@ -15,22 +15,38 @@ export function useRideFlow() {
     selectedVehicle, setSelectedVehicle,
     activeTrip, setActiveTrip,
     step, setStep,
+    serviceType, setServiceType,
+    hours, setHours,
     reset
   } = useBookingStore();
 
   const [isLoading, setIsLoading] = useState(false);
 
-  const fetchQuote = useCallback(async (p: Location, d: Location) => {
+  const fetchQuote = useCallback(async (p: Location, d: Location | null) => {
     setIsLoading(true);
     try {
-      const response = await getTripQuote({
+      const payload: any = {
+        service_type: serviceType,
         pickup_location: p.address,
-        dropoff_location: d.address,
         pickup_lat: p.lat,
         pickup_lng: p.lng,
-        dropoff_lat: d.lat,
-        dropoff_lng: d.lng
-      });
+      };
+
+      if (serviceType === 'hourly') {
+        payload.hours = hours;
+        if (d) {
+          payload.dropoff_location = d.address;
+          payload.dropoff_lat = d.lat;
+          payload.dropoff_lng = d.lng;
+        }
+      } else {
+        if (!d) return;
+        payload.dropoff_location = d.address;
+        payload.dropoff_lat = d.lat;
+        payload.dropoff_lng = d.lng;
+      }
+
+      const response = await getTripQuote(payload);
 
       if (response.status === 'success') {
         console.log("Client-side Quote Data:", response.data);
@@ -44,24 +60,41 @@ export function useRideFlow() {
     } finally {
       setIsLoading(false);
     }
-  }, [setQuote, setStep]);
+  }, [serviceType, hours, setQuote, router]);
 
-  const bookRide = useCallback(async (vehicle: VehicleQuote) => {
-    if (!pickup || !dropoff) return;
+  const bookRide = useCallback(async (
+    vehicle: VehicleQuote,
+    pickupDatetime?: string,
+    passengers?: number,
+    notes?: string
+  ) => {
+    if (!pickup || (serviceType === 'ride' && !dropoff)) return;
     
     setIsLoading(true);
     try {
-      const response = await requestTrip({
+      const payload: any = {
         pickup_location: pickup.address,
-        dropoff_location: dropoff.address,
         pickup_lat: pickup.lat,
         pickup_lng: pickup.lng,
-        dropoff_lat: dropoff.lat,
-        dropoff_lng: dropoff.lng,
         vehicle_id: vehicle.page_id.toString(),
         estimated_price: vehicle.estimated_price,
-        service_type: "ride"
-      });
+        service_type: serviceType
+      };
+
+      if (dropoff) {
+        payload.dropoff_location = dropoff.address;
+        payload.dropoff_lat = dropoff.lat;
+        payload.dropoff_lng = dropoff.lng;
+      }
+
+      if (serviceType === 'hourly') {
+        payload.hours = hours;
+        if (pickupDatetime) payload.pickup_datetime = pickupDatetime;
+        if (passengers) payload.passengers = passengers;
+        if (notes) payload.notes = notes;
+      }
+
+      const response = await requestTrip(payload);
 
       console.log("=== Book Ride Response ===", response);
 
@@ -113,6 +146,8 @@ export function useRideFlow() {
     selectedVehicle, setSelectedVehicle,
     activeTrip,
     step, setStep,
+    serviceType, setServiceType,
+    hours, setHours,
     reset
   };
 }

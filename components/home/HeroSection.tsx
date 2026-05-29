@@ -40,11 +40,11 @@ export function HeroSection({ hero }: HeroSectionProps) {
            src={"/lp.png"}
         //  src={hero.background_image || "https://images.unsplash.com/photo-1563720360172-67b8f3dce741?w=1920&h=1080&fit=crop&q=80"}
           alt="Luxury Ride"
-          className="w-full h-full object-cover opacity-90"
+          className="w-full h-full object-cover"
         />
         {/* Subtle overlay */}
-        <div className="absolute inset-0 bg-black/40 backdrop-blur-[1px]" />
-        <div className="absolute inset-0 bg-gradient-to-r from-black/60 to-transparent" />
+        <div className="absolute inset-0 bg-black/15 backdrop-blur-[0.5px]" />
+        <div className="absolute inset-0 bg-gradient-to-r from-black/35 to-transparent" />
       </div>
 
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">

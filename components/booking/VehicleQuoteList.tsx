@@ -68,6 +68,11 @@ export function VehicleQuoteList({ vehicles, onSelect, isLoading }: VehicleQuote
             <div className="text-xl font-bold text-grey-pastel mb-1">
               {vehicle.currency || '$'}{vehicle.estimated_price}
             </div>
+            {vehicle.hourly_rate && (
+              <div className="text-xs text-grey-medium mb-1">
+                {vehicle.currency || '$'}{vehicle.hourly_rate}/hr
+              </div>
+            )}
             <div className="flex items-center justify-end text-primary text-xs font-semibold">
               Select <ChevronRight className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" />
             </div>

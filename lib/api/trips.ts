@@ -16,16 +16,18 @@ async function getAuthHeaders() {
 }
 
 export async function getTripQuote(payload: {
+  service_type?: "ride" | "hourly";
   pickup_location: string;
-  dropoff_location: string;
+  dropoff_location?: string;
   pickup_lat: number;
   pickup_lng: number;
-  dropoff_lat: number;
-  dropoff_lng: number;
+  dropoff_lat?: number;
+  dropoff_lng?: number;
+  hours?: number;
   promo_code?: string;
 }): Promise<{ status: "success"; data: TripQuote } | { status: "fail"; message: string }> {
   try {
-    const res = await fetch(`${API_BASE_URL}/trips/get-quote`, {
+    const res = await fetch(`${API_BASE_URL}/trips/get-quote?debug=true`, {
       method: "POST",
       headers: await getAuthHeaders(),
       body: JSON.stringify(payload),
@@ -65,14 +67,18 @@ export async function validatePromo(promo_code: string, base_price: number) {
 
 export async function requestTrip(payload: {
   pickup_location: string;
-  dropoff_location: string;
+  dropoff_location?: string;
   pickup_lat: number;
   pickup_lng: number;
-  dropoff_lat: number;
-  dropoff_lng: number;
+  dropoff_lat?: number;
+  dropoff_lng?: number;
   vehicle_id: string;
   estimated_price: number;
-  service_type: "ride" | "delivery";
+  service_type: "ride" | "delivery" | "hourly";
+  hours?: number;
+  pickup_datetime?: string;
+  passengers?: number;
+  notes?: string;
   receiver_name?: string;
   receiver_phone?: string;
   package_type?: string;
