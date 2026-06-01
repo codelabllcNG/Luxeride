@@ -55,11 +55,11 @@ export function VehicleCard({ vehicle, index, onBook }: VehicleCardProps) {
           />
           <div className="absolute inset-0 bg-gradient-to-t from-dark-charcoal via-transparent to-transparent opacity-60" />
           
-          <div className="absolute top-4 left-4 flex gap-2">
+          {/* <div className="absolute top-4 left-4 flex gap-2">
             <span className="px-2 py-1 rounded-md bg-black/40 backdrop-blur-md border border-white/10 text-xs font-medium text-grey-pastel">
               {vehicle.title}
             </span>
-          </div>
+          </div> */}
 
           <div className="absolute top-4 right-4 px-2 py-1 rounded-md bg-white/90 backdrop-blur-md text-xs font-bold text-black flex items-center gap-1">
             <StarIcon className="w-3 h-3 fill-black" />
@@ -70,9 +70,9 @@ export function VehicleCard({ vehicle, index, onBook }: VehicleCardProps) {
         {/* DETAILS SECTION */}
         <div className="p-6 flex flex-col flex-grow">
           <div className="mb-4">
-            <h3 className="text-xl font-bold text-grey-pastel mb-2 group-hover:text-primary transition-colors line-clamp-1">
+            {/* <h3 className="text-xl font-bold text-grey-pastel mb-2 group-hover:text-primary transition-colors line-clamp-1">
               {vehicle.subheading}
-            </h3>
+            </h3> */}
             
             <div className="flex items-center gap-4 text-sm text-grey-medium">
               <div className="flex items-center gap-1.5">
