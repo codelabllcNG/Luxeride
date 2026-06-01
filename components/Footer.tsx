@@ -52,7 +52,7 @@ const footerLinks = {
   legal: [
     {
       name: "Privacy Policy",
-      path: "#",
+      path: "/privacy-policy",
     },
     {
       name: "Terms of Service",
