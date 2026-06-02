@@ -68,12 +68,12 @@ export function MarketplaceFeatured({ vehicles }: MarketplaceFeaturedProps) {
 
                   {/* Content */}
                   <div className="p-4">
-                    <span className="text-xs text-primary font-medium">
+                    {/* <span className="text-xs text-primary font-medium">
                       {vehicle.subheading || 'Vehicle'}
-                    </span>
-                    <h3 className="text-lg font-semibold text-grey-pastel mt-1 mb-2">
+                    </span> */}
+                    {/* <h3 className="text-lg font-semibold text-grey-pastel mt-1 mb-2">
                       {vehicle.title || 'Unknown Vehicle'}
-                    </h3>
+                    </h3> */}
                     <div className="flex items-center justify-between">
                       {/* <span className="text-primary font-bold">
                         {vehicle.price ? `$${vehicle.price}` : 'Contact us'}
