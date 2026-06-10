@@ -46,7 +46,7 @@ export default function ContactView({ data }: ContactViewProps) {
     {
       icon: PhoneIcon,
       title: 'Phone',
-      details: ["(202) 355-1410"],
+      details: ["(202) 335-1410"],
       action: "tel:2023551410"
     },
     {

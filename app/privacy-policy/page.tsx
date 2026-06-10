@@ -67,7 +67,7 @@ export default function PrivacyPolicyPage() {
               </p>
               <ul className="list-none space-y-2 mt-4">
                 <li>Email: Info@luxridex.com</li>
-                <li>Phone: (202) 355-1410</li>
+                <li>Phone: (202) 335-1410</li>
                 <li>Address: 2013 14th St NW, Washington, DC 20009, United States</li>
               </ul>
             </section>

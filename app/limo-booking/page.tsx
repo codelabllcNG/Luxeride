@@ -96,7 +96,7 @@ export default function LimoBookingPage() {
           )}
 
           {/* Filter Tabs */}
-          {!error && categories.length > 1 && (
+          {/* {!error && categories.length > 1 && (
             <div className="flex flex-wrap items-center justify-center gap-2 mb-12">
               {categories.map((cat) => (
                 <button
@@ -112,7 +112,7 @@ export default function LimoBookingPage() {
                 </button>
               ))}
             </div>
-          )}
+          )} */}
 
           {/* Vehicle Grid */}
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
